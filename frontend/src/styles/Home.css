@@ -1,0 +1,144 @@
+.home-page {
+  animation: fadeIn 0.5s ease-in;
+  background: transparent;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #6B4F1D;
+}
+
+.page-header h1 {
+  font-size: 3rem;
+  margin: 0 0 10px 0;
+  text-shadow: 2px 2px 4px #FFD700;
+
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  opacity: 1;
+  color: #A99260;
+  margin: 0;
+
+}
+
+.controls {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  background: transparent;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFFFFF;
+  padding: 10px 20px;
+  border-radius: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: #6B4F1D;
+  font-size: 0.9rem;
+}
+
+.filter-select {
+  padding: 8px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 1rem;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: border-color 0.3s;
+
+}.filter-select:hover {
+  border-color: #6B4F1D;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #6B4F1D;
+}
+
+.station-group {
+  margin-bottom: 40px;
+}
+
+.station-header {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #6B4F1D;
+  margin: 32px 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 3px solid #6B4F1D;
+  text-transform: capitalize;
+}
+
+.menu-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  margin-top: 28px;
+
+}
+
+.loading, .error, .no-items {
+  text-align: center;
+  padding: 60px 20px;
+  font-size: 1.2rem;
+  color: #6B4F1D;
+  background: #FFFFFF;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.error {
+  background: #FFD9D9;
+}
+
+@media (max-width: 768px) {
+  .page-header h1 {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .menu-items-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+}
