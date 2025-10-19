@@ -1,11 +1,11 @@
-const MenuItem = require('../models/MenuItem');
-const Review = require('../models/Review');
+const MenuItem = require('../models/MenuItem.db');
 
 // Get all menu items
 const getAllMenuItems = async (req, res) => {
   try {
-    // If cache is empty, try to refresh from source
-    if (MenuItem.isEmpty()) {
+    // If database is empty, try to refresh from source
+    const isEmpty = await MenuItem.isEmpty();
+    if (isEmpty) {
       const refreshed = await MenuItem.refreshMenuFromSource();
       if (!refreshed || refreshed.length === 0) {
         return res.status(503).json({ 
@@ -14,45 +14,49 @@ const getAllMenuItems = async (req, res) => {
       }
     }
 
-    const items = MenuItem.getAll();
+    const items = await MenuItem.getAll();
     res.json(items);
   } catch (error) {
+    console.error('Error fetching menu items:', error);
     res.status(503).json({ message: 'Failed to load Rathbone menu', error: error.message });
   }
 };
 
 // Get single menu item by ID
-const getMenuItemById = (req, res) => {
+const getMenuItemById = async (req, res) => {
   try {
-    const item = MenuItem.getById(req.params.id);
+    const item = await MenuItem.getById(req.params.id);
     if (!item) {
       return res.status(404).json({ message: 'Menu item not found' });
     }
     res.json(item);
   } catch (error) {
+    console.error('Error fetching menu item:', error);
     res.status(500).json({ message: 'Error fetching menu item', error: error.message });
   }
 };
 
 // Create new menu item (admin function)
-const createMenuItem = (req, res) => {
+const createMenuItem = async (req, res) => {
   try {
-    const newItem = MenuItem.create(req.body);
+    const newItem = await MenuItem.upsert(req.body);
     res.status(201).json(newItem);
   } catch (error) {
+    console.error('Error creating menu item:', error);
     res.status(500).json({ message: 'Error creating menu item', error: error.message });
   }
 };
 
 // Update menu item
-const updateMenuItem = (req, res) => {
+const updateMenuItem = async (req, res) => {
   try {
-    const updated = MenuItem.update(req.params.id, req.body);
+    const updated = await MenuItem.upsert({ id: req.params.id, ...req.body });
     if (!updated) {
       return res.status(404).json({ message: 'Menu item not found' });
     }
     res.json(updated);
   } catch (error) {
+    console.error('Error updating menu item:', error);
     res.status(500).json({ message: 'Error updating menu item', error: error.message });
   }
 };
@@ -70,6 +74,7 @@ const updateMenuItem = (req, res) => {
         items: updatedMenu 
       });
     } catch (error) {
+      console.error('Error refreshing menu:', error);
       res.status(500).json({ message: 'Error refreshing menu', error: error.message });
     }
   };

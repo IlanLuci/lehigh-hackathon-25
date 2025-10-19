@@ -12,7 +12,7 @@ const AddReviewForm = ({ menuItemId, onReviewAdded }) => {
     const savedName = localStorage.getItem('reviewUserName');
     if (savedName) setUserName(savedName);
   }, []);
-  const [photos, setPhotos] = useState([]);
+  const [photoFiles, setPhotoFiles] = useState([]);
   const [photoPreview, setPhotoPreview] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -24,19 +24,13 @@ const AddReviewForm = ({ menuItemId, onReviewAdded }) => {
     const previews = files.map(file => URL.createObjectURL(file));
     setPhotoPreview(prevPreviews => [...prevPreviews, ...previews]);
     
-    // For demo purposes, we'll store base64 encoded images
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotos(prevPhotos => [...prevPhotos, reader.result]);
-      };
-      reader.readAsDataURL(file);
-    });
+    // Store File objects to be sent as FormData
+    setPhotoFiles(prevFiles => [...prevFiles, ...files]);
   };
 
   const removePhoto = (index) => {
     setPhotoPreview(prev => prev.filter((_, i) => i !== index));
-    setPhotos(prev => prev.filter((_, i) => i !== index));
+    setPhotoFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -51,14 +45,19 @@ const AddReviewForm = ({ menuItemId, onReviewAdded }) => {
     setError('');
 
     try {
-
-      await createReview({
-        menuItemId,
-        rating,
-        comment,
-        userName: userName || 'Anonymous',
-        photos
+      // Create FormData to send files along with form data
+      const formData = new FormData();
+      formData.append('menuItemId', menuItemId);
+      formData.append('rating', rating);
+      formData.append('comment', comment);
+      formData.append('userName', userName || 'Anonymous');
+      
+      // Append photo files
+      photoFiles.forEach(file => {
+        formData.append('photos', file);
       });
+
+      await createReview(formData);
 
       // Save username locally for future reviews
       if (userName && userName.trim()) {
@@ -69,7 +68,7 @@ const AddReviewForm = ({ menuItemId, onReviewAdded }) => {
       setRating(0);
       setComment('');
   // Do not reset username so it persists for future reviews
-      setPhotos([]);
+      setPhotoFiles([]);
       setPhotoPreview([]);
       
       // Notify parent component

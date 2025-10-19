@@ -18,7 +18,12 @@ export const getReviewsByMenuItem = async (menuItemId) => {
 };
 
 export const createReview = async (reviewData) => {
-  const response = await api.post('/api/reviews', reviewData);
+  // If reviewData is FormData (for file uploads), send with proper headers
+  const config = reviewData instanceof FormData 
+    ? { headers: { 'Content-Type': 'multipart/form-data' } }
+    : {};
+  
+  const response = await api.post('/api/reviews', reviewData, config);
   return response.data;
 };
 
