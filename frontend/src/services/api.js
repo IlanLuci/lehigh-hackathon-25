@@ -1,8 +1,12 @@
 import axios from 'axios';
 
 let API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
-if (typeof window !== 'undefined' && window.location.hostname === 'boned.macandbutter.com') {
-  API_BASE_URL = 'https://boned-api.macandbutter.com';
+if (typeof window !== 'undefined') {
+  const frontendOrigin = window.location.origin;
+  // Match both exact domain and protocol
+  if (frontendOrigin === 'https://boned.macandbutter.com' || window.location.hostname === 'boned.macandbutter.com') {
+    API_BASE_URL = 'https://boned-api.macandbutter.com';
+  }
 }
 
 const api = axios.create({
