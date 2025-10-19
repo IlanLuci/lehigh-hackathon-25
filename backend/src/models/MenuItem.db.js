@@ -96,7 +96,9 @@ class MenuItem {
       return freshMenu;
     } catch (error) {
       console.error('Error refreshing menu:', error);
-      throw error;
+      // Fallback: return current DB menu items (do not throw)
+      const result = await pool.query('SELECT * FROM menu_items WHERE available = true ORDER BY station, name');
+      return result.rows;
     }
   }
 
