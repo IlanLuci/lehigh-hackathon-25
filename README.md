@@ -93,25 +93,28 @@ The frontend will run on `http://localhost:3000`
 
 ### Core Functionality
 - 🍽️ **Live Menu Scraping** - Automatically fetches daily menu from Sodexo API
+- ⏰ **Dining Hours Status** - Shows whether Rathbone is open/closed with next meal times
+- 🍳 **Meal Period Filtering** - Displays menu for current meal (breakfast, lunch, dinner)
 - ⭐ **Ratings & Reviews** - Rate dishes 1-5 stars with optional comments
-- 📸 **Photo Uploads** - Upload up to 5 photos per review (stored in AWS S3)
-- 🏷️ **Smart Filtering** - Hides condiments, single vegetables, and non-food items
+- 📸 **Photo Uploads** - Upload 1 photo per review (stored in AWS S3)
+- 🏷️ **Smart Filtering** - Hides condiments, single vegetables, dressings, and non-food items
 - 📊 **Station Grouping** - Items organized by dining station with entrees first
 - 🎯 **Smart Sorting** - Stations sorted by best-reviewed entrees
+- 👤 **Persistent User Names** - Username saved locally for future reviews
 
 ### Technical Stack
 - ✅ Full-stack architecture (Node.js + React)
 - ✅ **AWS RDS PostgreSQL** - Persistent database storage
-- ✅ **AWS S3** - Scalable image hosting with CDN
+- ✅ **AWS S3 (SDK v3)** - Scalable image hosting with default credential chain support
 - ✅ Progressive Web App (PWA) capabilities
 - ✅ Service Worker for offline functionality
-- ✅ Express.js RESTful API with file upload support
+- ✅ Express.js RESTful API with multipart file upload support
 - ✅ React Router for navigation
 - ✅ Axios for API communication
 - ✅ CORS enabled
 - ✅ **Puppeteer** - Headless browser for dynamic menu scraping
 - ✅ **Multer** - File upload middleware
-- ✅ **PostgreSQL** - Production-ready database with proper relations
+- ✅ **PostgreSQL** - Production-ready database with proper relations and indices
 
 ### Design
 - 🎨 Lehigh University color scheme (Brown #6B4F1D, Gold #FFD700, Beige #E8E4D9)
@@ -134,6 +137,9 @@ The frontend will run on `http://localhost:3000`
 - `DELETE /api/reviews/:id` - Delete a review
 - `PUT /api/reviews/:id/helpful` - Mark review as helpful
 
+### Dining Hours
+- `GET /api/hours/status` - Get current dining hall status, hours, and next meal info
+
 ## Architecture
 
 ### Database Schema
@@ -146,24 +152,30 @@ The frontend will run on `http://localhost:3000`
 - **Models**
   - `MenuItem.db.js` - Database operations for menu items
   - `Review.db.js` - Database operations for reviews
-  - `MenuScraper` - Service to fetch menu from Sodexo API
+  - `MenuScraper` - Service to fetch menu from Sodexo API with meal period tagging
 - **Controllers**
-  - `menuItem.controller.js` - Menu item business logic
-  - `review.controller.js` - Review business logic with S3 integration
+  - `menuItem.controller.js` - Menu item business logic with camelCase field mapping
+  - `review.controller.js` - Review business logic with S3 integration and field mapping
 - **Config**
-  - `database.js` - PostgreSQL connection pool and schema initialization
-  - `s3.js` - AWS S3 upload/delete helpers
+  - `database.js` - PostgreSQL connection pool and schema initialization with SSL support
+  - `s3.js` - AWS S3 SDK v3 upload/delete helpers with default credential chain
 - **Middleware**
-  - `upload.js` - Multer configuration for file uploads
+  - `upload.js` - Multer configuration for multipart file uploads
+- **Routes**
+  - `menuItem.routes.js` - Menu item endpoints
+  - `review.routes.js` - Review endpoints
 
 ### Frontend Components
 - **Pages**
-  - `Home.js` - Main menu display with station grouping and sorting
+  - `Home.js` - Main menu display with station grouping, meal filtering, and open/closed status
 - **Components**
-  - `MenuItemCard` - Display menu item with ratings
-  - `AddReviewForm` - Review submission with photo upload
-  - `ReviewCard` - Display individual review with photos
-  - `StarRating` - Interactive star rating component
+  - `MenuItemCard` - Display menu item with ratings and pinned action buttons
+  - `AddReviewForm` - Review submission with photo upload (1 photo max)
+  - `ReviewCard` - Display individual review with photos and helpful button
+  - `StarRating` - Interactive star rating component with numeric display
+- **Services**
+  - `api.js` - Axios instance with base configuration
+  - `menuService.js` - API calls for menu items, reviews, and dining status
 
 ## Documentation
 
@@ -177,11 +189,14 @@ The frontend will run on `http://localhost:3000`
 
 The application fetches menu items from the Rathbone Dining Hall via Sodexo API:
 - **Live Scraping** - Puppeteer intercepts network requests for JSON data
+- **Meal Period Tagging** - Items tagged with breakfast, lunch, or dinner for filtering
 - **Stations** - Bliss, Grown, Mix, Savory, Showcase, Simple Servings, Sizzle, Slices
-- **Smart Filtering** - Automatically hides condiments, single ingredients, non-food items
-- **Daily Updates** - Menu refreshes automatically on server start
+- **Smart Filtering** - Automatically hides condiments, dressings, single ingredients, non-food items
+  - Excludes items like "Greek Vinaigrette", "Green Leaf Lettuce", "Sliced Plum Tomatoes"
+- **Daily Updates** - Menu refreshes automatically on server start if database is empty
 - **Manual Refresh** - Use `/api/menu/refresh` endpoint to force update
-- **Persistence** - Menu stored in PostgreSQL, ratings preserved across refreshes
+- **Persistence** - Menu stored in PostgreSQL with upsert logic, ratings preserved across refreshes
+- **Dining Hours** - Backend provides current status and next meal times for UI display
 
 ## Development
 

@@ -118,15 +118,14 @@ const AddReviewForm = ({ menuItemId, onReviewAdded }) => {
         </div>
 
         <div className="form-group">
-          <label>Upload Photos (Optional)</label>
+          <label>Upload Photo (Optional)</label>
           <input
             type="file"
             accept="image/*"
-            multiple
             onChange={handlePhotoChange}
-            disabled={photoPreview.length >= 3}
+            disabled={photoPreview.length >= 1}
           />
-          <small>You can upload up to 3 photos</small>
+          <small>You can upload 1 photo</small>
           
           {photoPreview.length > 0 && (
             <div className="photo-preview-grid">
