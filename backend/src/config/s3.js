@@ -34,7 +34,6 @@ async function uploadImageToS3(fileBuffer, fileName, mimeType) {
       Key: key,
       Body: fileBuffer,
       ContentType: mimeType,
-      ACL: 'public-read', // Make images publicly accessible
     }));
     return buildPublicUrl(bucketName, key);
   } catch (error) {

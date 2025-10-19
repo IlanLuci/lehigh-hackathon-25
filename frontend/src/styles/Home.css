@@ -97,7 +97,13 @@
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 32px;
   margin-top: 28px;
+  max-width: 100%;
+}
 
+@media (max-width: 768px) {
+  .menu-items-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .loading, .error, .no-items {

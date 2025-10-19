@@ -47,81 +47,81 @@ const MenuItemCard = ({ item }) => {
     window.location.reload();
   };
 
-  return (
-    <div className="menu-item-card">
-      <div className="menu-item-header">
-        <div className="menu-item-main">
-          <h3 className="menu-item-name">{item.name}</h3>
-          <span className="menu-item-station">{item.station}</span>
-        </div>
-        <div className="menu-item-rating">
-          <StarRating 
-            rating={item.averageRating} 
-            readonly 
-            size="medium"
-          />
-          {item.totalReviews > 0 && (
-            <span className="review-count">
-              {item.totalReviews} {item.totalReviews === 1 ? 'review' : 'reviews'}
-            </span>
-          )}
-        </div>
-      </div>
+    return (
+      <div className="menu-item-card">
+        <div className="menu-item-content">
+          <div className="menu-item-header">
+            <div className="menu-item-main">
+              <h3 className="menu-item-name">{item.name}</h3>
+            </div>
+            <div className="menu-item-rating">
+              <StarRating 
+                rating={item.averageRating} 
+                readonly 
+                size="medium"
+              />
+              {item.totalReviews > 0 && (
+                <span className="review-count">
+                  {item.totalReviews} {item.totalReviews === 1 ? 'review' : 'reviews'}
+                </span>
+              )}
+            </div>
+          </div>
 
-      <p className="menu-item-description">{item.description}</p>
+          <p className="menu-item-description">{item.description}</p>
 
-      {item.dietaryInfo && item.dietaryInfo.length > 0 && (
-        <div className="dietary-info">
-          {item.dietaryInfo.map((info, index) => (
-            <span key={index} className="dietary-tag">{info}</span>
-          ))}
-        </div>
-      )}
-
-      <div className="menu-item-actions">
-        <button 
-          className="btn btn-secondary"
-          onClick={handleToggleReviews}
-        >
-          {showReviews ? 'Hide Reviews' : 'View Reviews'}
-        </button>
-        <button 
-          className="btn btn-primary"
-          onClick={() => setShowAddReview(!showAddReview)}
-        >
-          {showAddReview ? 'Cancel' : 'Add Review'}
-        </button>
-      </div>
-
-      {showAddReview && (
-        <AddReviewForm 
-          menuItemId={item.id} 
-          onReviewAdded={handleReviewAdded}
-        />
-      )}
-
-      {showReviews && (
-        <div className="reviews-section">
-          <h4>Reviews</h4>
-          {loading ? (
-            <p>Loading reviews...</p>
-          ) : reviews.length === 0 ? (
-            <p className="no-reviews">No reviews yet. Be the first to review!</p>
-          ) : (
-            <div className="reviews-list">
-              {reviews.map((review) => (
-                <ReviewCard 
-                  key={review.id} 
-                  review={review}
-                  onMarkHelpful={handleMarkHelpful}
-                />
+          {item.dietaryInfo && item.dietaryInfo.length > 0 && (
+            <div className="dietary-info">
+              {item.dietaryInfo.map((info, index) => (
+                <span key={index} className="dietary-tag">{info}</span>
               ))}
             </div>
           )}
+
+          {showAddReview && (
+            <AddReviewForm 
+              menuItemId={item.id} 
+              onReviewAdded={handleReviewAdded}
+            />
+          )}
+
+          {showReviews && (
+            <div className="reviews-section">
+              <h4>Reviews</h4>
+              {loading ? (
+                <p>Loading reviews...</p>
+              ) : reviews.length === 0 ? (
+                <p className="no-reviews">No reviews yet. Be the first to review!</p>
+              ) : (
+                <div className="reviews-list">
+                  {reviews.map((review) => (
+                    <ReviewCard 
+                      key={review.id} 
+                      review={review}
+                      onMarkHelpful={handleMarkHelpful}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
+        <div className="menu-item-actions-pinned">
+          <button 
+            className="btn btn-secondary"
+            onClick={handleToggleReviews}
+          >
+            {showReviews ? 'Hide Reviews' : 'View Reviews'}
+          </button>
+          <button 
+            className="btn btn-primary"
+            onClick={() => setShowAddReview(!showAddReview)}
+          >
+            {showAddReview ? 'Cancel' : 'Add Review'}
+          </button>
+        </div>
+      </div>
+    );
 };
 
 export default MenuItemCard;

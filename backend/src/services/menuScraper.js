@@ -342,11 +342,26 @@ async function fetchWithPuppeteer() {
       const results = [];
       const seen = new Set();
 
+      function normalizeMeal(meal) {
+        if (!meal || typeof meal !== 'string') return undefined;
+        const m = meal.toLowerCase();
+        if (/(breakfast)/i.test(m)) return 'Breakfast';
+        if (/(brunch)/i.test(m)) return 'Brunch';
+        if (/(lunch)/i.test(m)) return 'Lunch';
+        if (/(dinner)/i.test(m)) return 'Dinner';
+        return undefined;
+      }
+
       function add(name, station, meal, description = '') {
         if (!name || typeof name !== 'string') return;
         name = name.trim();
         if (!name || /^(breakfast|brunch|lunch|dinner)$/i.test(name)) return;
-        
+
+        // Explicitly filter out specific items
+        if (name.toLowerCase() === 'greek vinaigrette') return;
+        if (name.toLowerCase() === 'green leaf lettuce') return;
+        if (name.toLowerCase() === 'sliced plum tomatoes') return;
+
         // Filter out condiments, single vegetables, toppings, chips, and basic ingredients
         // General patterns for common toppings and ingredients
         const nameLower = name.toLowerCase();
@@ -373,19 +388,20 @@ async function fetchWithPuppeteer() {
           /^(pickled|sliced|fresh|raw).*\b(onions?|peppers?)\b/i,
           /^(bacon|croutons|pickles)$/i,
         ];
-        
+
         if (excludePatterns.some(pattern => pattern.test(nameLower))) return;
         if ((station || '').match(/allergen|diet key|nutrition|dressing|sauce/i)) return;
-        
+
         const key = `${name.toLowerCase()}|${(station||'').toLowerCase()}`;
         if (seen.has(key)) return;
         const category = meal || determineCategory(name, station || '');
+        const mealPeriod = normalizeMeal(meal);
         results.push({
           name,
           description: (description || '').toString(),
           station: (station || '').toString() || 'Main',
           category: category || 'Entree',
-          dietaryInfo: [],
+          dietaryInfo: mealPeriod ? { mealPeriod } : [],
           available: true,
           averageRating: 0,
           totalReviews: 0

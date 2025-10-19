@@ -1,3 +1,6 @@
+.btn.btn-secondary {
+  white-space: nowrap;
+}
 .menu-item-card {
   background: #FFFFFF;
   border-radius: 15px;
@@ -5,6 +8,9 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
   animation: slideUp 0.5s ease-out;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 @keyframes slideUp {
@@ -36,20 +42,11 @@
 }
 
 .menu-item-name {
-  margin: 0 0 5px 0;
+  margin: 0 0 2px 0;
   font-size: 1.5rem;
   color: #6B4F1D;
 }
 
-.menu-item-station {
-  display: inline-block;
-  background: #6B4F1D;
-  color: #FFFFFF;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
 
 .menu-item-rating {
   display: flex;
@@ -66,7 +63,7 @@
 .menu-item-description {
   color: #6B4F1D;
   line-height: 1.6;
-  margin: 15px 0;
+  margin: 6px 0 12px 0;
 }
 
 .dietary-info {
@@ -85,10 +82,22 @@
   font-weight: 600;
 }
 
-.menu-item-actions {
+
+.menu-item-actions-pinned {
   display: flex;
   gap: 10px;
   margin-top: 20px;
+  margin-bottom: 0;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  margin-top: auto;
+}
+
+.menu-item-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .btn {
@@ -125,6 +134,7 @@
   margin-top: 25px;
   padding-top: 25px;
   border-top: 2px solid #f0f0f0;
+  margin-bottom: 24px;
 }
 
 .reviews-section h4 {
@@ -159,7 +169,7 @@
     align-items: flex-start;
   }
 
-  .menu-item-actions {
+  .menu-item-actions-pinned {
     flex-direction: column;
   }
 }

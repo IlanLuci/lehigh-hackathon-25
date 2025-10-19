@@ -12,15 +12,16 @@ const ReviewCard = ({ review, onMarkHelpful }) => {
     });
   };
 
+  const userName = review.userName || 'Anonymous';
   return (
     <div className="review-card">
       <div className="review-header">
         <div className="review-author">
           <div className="author-avatar">
-            {review.userName.charAt(0).toUpperCase()}
+            {userName.charAt(0).toUpperCase()}
           </div>
           <div className="author-info">
-            <span className="author-name">{review.userName}</span>
+            <span className="author-name">{userName}</span>
             <span className="review-date">{formatDate(review.createdAt)}</span>
           </div>
         </div>

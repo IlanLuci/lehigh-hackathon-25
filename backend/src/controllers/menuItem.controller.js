@@ -15,7 +15,14 @@ const getAllMenuItems = async (req, res) => {
     }
 
     const items = await MenuItem.getAll();
-    res.json(items);
+    // Map DB fields to camelCase for frontend
+    const mappedItems = items.map(item => ({
+      ...item,
+      averageRating: item.average_rating,
+      totalReviews: item.total_reviews,
+      dietaryInfo: item.dietary_info,
+    }));
+    res.json(mappedItems);
   } catch (error) {
     console.error('Error fetching menu items:', error);
     res.status(503).json({ message: 'Failed to load Rathbone menu', error: error.message });
@@ -29,7 +36,14 @@ const getMenuItemById = async (req, res) => {
     if (!item) {
       return res.status(404).json({ message: 'Menu item not found' });
     }
-    res.json(item);
+    // Map DB fields to camelCase for frontend
+    const mappedItem = {
+      ...item,
+      averageRating: item.average_rating,
+      totalReviews: item.total_reviews,
+      dietaryInfo: item.dietary_info,
+    };
+    res.json(mappedItem);
   } catch (error) {
     console.error('Error fetching menu item:', error);
     res.status(500).json({ message: 'Error fetching menu item', error: error.message });

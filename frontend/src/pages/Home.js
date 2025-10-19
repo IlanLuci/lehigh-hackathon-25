@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import MenuItemCard from '../components/MenuItemCard/MenuItemCard';
-import { getAllMenuItems } from '../services/menuService';
+import { getAllMenuItems, getDiningStatus } from '../services/menuService';
 import '../styles/Home.css';
 
 const Home = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [status, setStatus] = useState({ isOpen: true, currentMeal: null, nextMeal: null, nextOpensAt: null });
   const [filterCategory, setFilterCategory] = useState('all');
   const [sortBy, setSortBy] = useState('name');
 
   useEffect(() => {
-    loadMenuItems();
+    loadMenu();
   }, []);
 
-  const loadMenuItems = async () => {
+  const loadMenu = async () => {
     try {
       setLoading(true);
       setError('');
-      const items = await getAllMenuItems();
+      const [hours, items] = await Promise.all([getDiningStatus(), getAllMenuItems()]);
+      setStatus(hours);
       setMenuItems(items);
     } catch (err) {
       // Try to surface server-provided message if present
@@ -33,9 +35,26 @@ const Home = () => {
   const categories = ['all', ...new Set(menuItems.map(item => item.category))];
 
 
+  // Filter menu by current or next meal based on status and mealPeriod embedded in dietaryInfo
+  function getMealForFiltering() {
+    if (status.isOpen && status.currentMeal) return status.currentMeal;
+    if (!status.isOpen && status.nextMeal) return status.nextMeal;
+    return null; // fall back to all if unknown
+  }
+
+  const mealFilter = getMealForFiltering();
+
+  const filteredByMeal = mealFilter
+    ? menuItems.filter(item => {
+        const di = item.dietaryInfo;
+        const mealPeriod = di && typeof di === 'object' && di.mealPeriod ? di.mealPeriod : null;
+        return !mealPeriod || mealPeriod === mealFilter;
+      })
+    : menuItems;
+
   // Group items by station
   const groupedByStation = {};
-  menuItems.forEach(item => {
+  filteredByMeal.forEach(item => {
     if (filterCategory !== 'all' && item.category !== filterCategory) return;
     const station = item.station || 'Other';
     if (!groupedByStation[station]) groupedByStation[station] = [];
@@ -90,7 +109,7 @@ const Home = () => {
     return (
       <div className="error">
         <p>{error}</p>
-        <button className="btn btn-secondary" onClick={loadMenuItems} style={{ marginTop: 12 }}>
+        <button className="btn btn-secondary" onClick={loadMenu} style={{ marginTop: 12 }}>
           Retry Fetch
         </button>
       </div>
@@ -103,6 +122,38 @@ const Home = () => {
         <h1 style={{fontSize: '2.5rem', marginBottom: 4, textShadow: 'none'}}>🦴 Boned</h1>
         <p className="subtitle" style={{fontSize: '1rem', marginBottom: 0}}>Rate, review, and share your Rathbone dining experience!</p>
       </header>
+
+      {/* Open/closed banner */}
+      {status && (
+        <div className="status-banner" style={{
+          background: status.isOpen ? '#E0F7EC' : '#FFF4E5',
+          color: '#333',
+          border: `1px solid ${status.isOpen ? '#2E7D32' : '#B26A00'}`,
+          padding: 12,
+          borderRadius: 8,
+          marginBottom: 12
+        }}>
+          {status.isOpen ? (
+            <div>
+              <strong>Open</strong>{status.currentMeal ? ` — ${status.currentMeal}` : ''}
+              {status.nextMeal && status.nextOpensAt && (
+                <span style={{ marginLeft: 8, color: '#555' }}>
+                  Next: {status.nextMeal} at {new Date(status.nextOpensAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                </span>
+              )}
+            </div>
+          ) : (
+            <div>
+              <strong>Closed</strong>
+              {status.nextMeal && status.nextOpensAt && (
+                <span style={{ marginLeft: 8 }}>
+                  — Reopens for {status.nextMeal} at {new Date(status.nextOpensAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="controls">
         <div className="filter-group">
@@ -134,7 +185,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Render all items grouped by station, sorted by best reviewed entree, Dessert at the bottom */}
+  {/* Render all items grouped by station (filtered by meal when known), sorted by best reviewed entree, Dessert at the bottom */}
       {(() => {
         const entries = Object.entries(groupedByStation);
         // Separate dessert

@@ -36,3 +36,9 @@ export const markReviewHelpful = async (id) => {
   const response = await api.put(`/api/reviews/${id}/helpful`);
   return response.data;
 };
+
+// Hours / status
+export const getDiningStatus = async () => {
+  const response = await api.get('/api/hours/status');
+  return response.data;
+};

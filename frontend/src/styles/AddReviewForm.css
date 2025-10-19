@@ -1,9 +1,11 @@
 .add-review-form {
-  background: #f5f7fa;
-  border-radius: 12px;
-  padding: 25px;
+  background: #fff;
+  border-radius: 15px;
+  padding: 28px 32px 24px 32px;
   margin-top: 20px;
-  border: 2px solid #e0e0e0;
+  margin-bottom: 24px;
+  border: none;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
   animation: slideDown 0.4s ease-out;
 }
 
@@ -21,9 +23,10 @@
 }
 
 .add-review-form h3 {
-  margin: 0 0 20px 0;
-  color: #2c3e50;
-  font-size: 1.4rem;
+  margin: 0 0 18px 0;
+  color: #6B4F1D;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .error-message {
@@ -41,28 +44,30 @@
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 7px;
   font-weight: 600;
-  color: #2c3e50;
-  font-size: 0.95rem;
+  color: #6B4F1D;
+  font-size: 0.97rem;
 }
 
 .form-group input[type="text"],
-.form-group textarea {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
+  .form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #E8E4D9;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+    background: #faf8f4;
+    color: #6B4F1D;
 }
 
 .form-group input[type="text"]:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #667eea;
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #6B4F1D;
 }
 
 .form-group textarea {
@@ -79,16 +84,17 @@
 
 .form-group input[type="file"] {
   padding: 10px;
-  border: 2px dashed #e0e0e0;
-  border-radius: 8px;
+  border: 2px dashed #E8E4D9;
+  border-radius: 10px;
   cursor: pointer;
   width: 100%;
   box-sizing: border-box;
   transition: border-color 0.3s;
+  background: #faf8f4;
 }
 
 .form-group input[type="file"]:hover {
-  border-color: #667eea;
+  border-color: #6B4F1D;
 }
 
 .form-group input[type="file"]:disabled {
@@ -144,12 +150,12 @@
 .submit-review-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: #6B4F1D;
+  color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  border-radius: 10px;
+  font-size: 1.08rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s;
   margin-top: 10px;
@@ -157,7 +163,7 @@
 
 .submit-review-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 6px 16px rgba(107, 79, 29, 0.13);
 }
 
 .submit-review-btn:disabled {
@@ -167,9 +173,8 @@
 
 @media (max-width: 768px) {
   .add-review-form {
-    padding: 20px;
+    padding: 18px;
   }
-
   .photo-preview-item {
     width: 80px;
     height: 80px;

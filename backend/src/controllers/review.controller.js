@@ -6,7 +6,14 @@ const { uploadMultipleImages, deleteImageFromS3 } = require('../config/s3');
 const getReviewsByMenuItem = async (req, res) => {
   try {
     const reviews = await Review.getByMenuItem(req.params.menuItemId);
-    res.json(reviews);
+    // Map DB fields to camelCase for frontend
+    const mappedReviews = reviews.map(r => ({
+      ...r,
+      userName: r.user_name,
+      createdAt: r.created_at,
+      helpful: r.helpful_count,
+    }));
+    res.json(mappedReviews);
   } catch (error) {
     console.error('Error fetching reviews:', error);
     res.status(500).json({ message: 'Error fetching reviews', error: error.message });
